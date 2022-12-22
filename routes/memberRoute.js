@@ -25,24 +25,36 @@ router.post(
     }),
     body("email", "Enter a valid Email").isEmail(),
     body("phoneNumber")
-      .if(body("phoneNumber").exists())
+      .isInt()
+      .withMessage("Phone Number must be in number only")
       .isLength({ min: 10, max: 10 })
       .withMessage("Invalid Phone Number!"),
-    body("streetAddress", "Please Enter a valid Street Address").exists(),
+    body("streetAddress", "Please Enter a valid Street Address").isLength({
+      min: 3,
+    }),
     body("address_nepal", "Please Enter a valid Address of Nepal").isLength({
       min: 3,
     }),
     body("dob", "Enter a valid Date of Birth").isDate(),
-    body("postalTown", "Please Enter a valid Postal Town").exists(),
-    body("postalCode", "Please Enter a valid Postal Code").isInt().exists(),
+    body("postalTown", "Please Enter a valid Postal Town").isLength({
+      min: 3,
+    }),
+    body("postalCode", "Please Enter a valid Postal Code").isLength({
+      min: 3,
+    }),
     body("familyFullName", "Please Enter Family Full Name").isLength({
       min: 5,
     }),
-    body("familyRelation", "Please Enter the relation of the family").exists(),
-    body("familydob", "Please Enter the family DOB").exists().isDate(),
-    body("familyAddress", "Please Enter the Family Address").exists(),
+    body("familyRelation", "Please Enter the relation of the family").isLength({
+      min: 3,
+    }),
+    body("familydob", "Please Enter the family DOB").isDate(),
+    body("familyAddress", "Please Enter the Family Address").isLength({
+      min: 5,
+    }),
     body("familyPhone")
-      .if(body("familyPhone").exists())
+      .isInt()
+      .withMessage("Phone Number must be in number only")
       .isLength({ min: 10, max: 10 })
       .withMessage("Please Enter valid Phone Number of family!"),
   ],
@@ -51,8 +63,7 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-       return res.status(400).send({ errors: errors.array() });
-    
+      return res.status(400).send({ errors: errors.array() });
     }
     const { email, phoneNumber } = req.body;
     try {
@@ -61,11 +72,13 @@ router.post(
       if (member_email) {
         return res
           .status(400)
-          .json({ errors: "A member already exists with this email!" });
+          .json({ emailExist: "A member already exists with this email!" });
       } else if (member_phoneNumber) {
         return res
           .status(400)
-          .json({ errors: "A member already exists with this Phone Number!" });
+          .json({
+            numberExist: "A member already exists with this Phone Number!",
+          });
       } else {
         member = await Member.create({
           fullname: req.body.fullname,
