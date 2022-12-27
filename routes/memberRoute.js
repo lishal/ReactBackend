@@ -119,6 +119,18 @@ router.get("/fetchallmembers", fetchUser, async (req, res) => {
   }
 });
 
+//Fetch all the Members In Main Page
+
+router.get("/fetchallmembershomepage", async (req, res) => {
+  try {
+    const membersHome = await Member.find();
+    res.json({ membersHome });
+  } catch (error) {
+    res.status(500).send("Internal Server Error!");
+  }
+});
+
+
 // Update the Members
 router.put("/updateMember/:id", fetchUser, async (req, res) => {
   const {

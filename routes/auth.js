@@ -67,6 +67,8 @@ router.post(
     body("password","Password cannot be blank").exists(),
 ],async(req,res)=>{
 
+    let success=false;
+
     const errors=validationResult(req);
     if(!errors.isEmpty()){
         return res.status(400).json({errors:errors.array()});
@@ -74,11 +76,16 @@ router.post(
     const {email, password}=req.body;
     try {
         let user=await Admin.findOne({email});
+        
         if(!user){
+          success=false;
         return res.status(400).json({error:"Please try again! Invalid credintials!"})
         }
-        const passwordComp = await bcrypt.compare(password, user.password);
+       
+        const passwordComp = await bcrypt.compare(password[0], user.password);
+
         if(!passwordComp){
+          success=false;
             return res.status(400).json({error:"Please try again! Invalid credintials!"})
         }
         const data={
@@ -87,7 +94,8 @@ router.post(
             }
           }
         const authtoken=jwt.sign(data,jwt_secret);
-      res.json({authtoken})
+        success=true;
+      res.json({success,authtoken})
     } catch (error) {
         console.error(error.message)
         res.status(500).send("Internal Server Error!");
