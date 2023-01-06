@@ -46,13 +46,14 @@ router.post(
         }
       }
       const authtoken=jwt.sign(data,jwt_secret);
-      res.json({authtoken})
-
+      return res.json({authtoken})
+      
     //   res.json(user);
     } catch (error) {
         //Catch error and log errors!
         console.error(error.message)
-        res.status(500).send("Opps! Somthing wrong happened!");
+        return res.status(500).send("Opps! Somthing wrong happened!");
+        
     }
     // res.json(user);
     // res.send(req.body);
@@ -95,10 +96,10 @@ router.post(
           }
         const authtoken=jwt.sign(data,jwt_secret);
         success=true;
-      res.json({success,authtoken})
+      return res.json({success,authtoken})
     } catch (error) {
         console.error(error.message)
-        res.status(500).send("Internal Server Error!");
+        return res.status(500).send("Internal Server Error!");
     
     }
 })
@@ -108,10 +109,10 @@ router.post('/getuser',fetchUser,async(req,res)=>{
     try {
         userId=req.user.id;
         const user=await Admin.findById(userId).select("-password") //Get all Data from Logged in user except the Password
-        res.send(user);
+        return res.send(user);
     } catch (error) {
         console.error(error.message)
-        res.status(500).send("Internal Server Error!");
+        return res.status(500).send("Internal Server Error!");
     
     }
     

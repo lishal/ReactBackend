@@ -100,10 +100,10 @@ router.post(
           //     contentType: 'image/png'
           // }
         });
-        res.json({ member });
+        return res.json({ member });
       }
     } catch (error) {
-      res.status(500).send("Internal Server Error!");
+      return res.status(500).send("Internal Server Error!");
     }
   }
 );
@@ -113,9 +113,9 @@ router.post(
 router.get("/fetchallmembers", fetchUser, async (req, res) => {
   try {
     const members = await Member.find();
-    res.json({ members });
+    return res.json({ members });
   } catch (error) {
-    res.status(500).send("Internal Server Error!");
+    return res.status(500).send("Internal Server Error!");
   }
 });
 
@@ -124,9 +124,9 @@ router.get("/fetchallmembers", fetchUser, async (req, res) => {
 router.get("/fetchallmembershomepage", async (req, res) => {
   try {
     const membersHome = await Member.find();
-    res.json({ membersHome });
+    return res.json({ membersHome });
   } catch (error) {
-    res.status(500).send("Internal Server Error!");
+    return res.status(500).send("Internal Server Error!");
   }
 });
 
@@ -206,9 +206,9 @@ router.put("/updateMember/:id", fetchUser, async (req, res) => {
       { $set: updateMember },
       { new: true }
     );
-    res.json({ member });
+    return res.json({ member });
   } catch (error) {
-    res.status(500).send("Internal Server Error!");
+    return res.status(500).send("Internal Server Error!");
   }
 });
 
@@ -222,7 +222,7 @@ router.delete("/deleteMember/:id", fetchUser, async (req, res) => {
     member = await Member.findByIdAndDelete(req.params.id);
     res.json({ success: "Member Successfully Deleted!", member: member });
   } catch (error) {
-    res.status(500).send("Internal Server Error!");
+    return res.status(500).send("Internal Server Error!");
   }
 });
 
